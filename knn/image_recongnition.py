@@ -46,5 +46,4 @@ def handwritingClassTest():
 
 
 if __name__ == '__main__':
-    vector = img2vector(TRAINDIR + '3_18.txt')
-    print(vector[0, 32:63])
+    handwritingClassTest()

@@ -1,15 +1,10 @@
-
 # coding: utf-8
 
-# In[4]:
 from numpy import array, zeros, tile, shape
 import operator
+import matplotlib.pyplot as plt
 
-
-def createDataSet():
-    group = array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
-    labels = ['A','A','B','B']
-    return group,labels
+TESTFILE = '/Users/peilei/MyGitHub/machinelearninginaction/Ch02/datingTestSet.txt'
 
 
 def classify0(inX, dataSet, labels, k):
@@ -22,7 +17,7 @@ def classify0(inX, dataSet, labels, k):
     dataSetSize = dataSet.shape[0]   # Tuple of array dimensions
     # 计算距离
     diffMat = tile(inX, (dataSetSize,1)) - dataSet    # Construct an array by repeating A the number of times given by reps
-    print(diffMat)
+    print('diffMat:', diffMat)
     sqDiffMat = diffMat**2
     sqDistances = sqDiffMat.sum(axis=1)    # Sum of array elements over a given axis
     distances = sqDistances**0.5
@@ -35,9 +30,6 @@ def classify0(inX, dataSet, labels, k):
     # 排序
     sortedClassCount = sorted(classCount.items(),key=operator.itemgetter(1), reverse=True)
     return sortedClassCount[0][0]
-
-group, labels = createDataSet()
-print(classify0([0.2,0.2], group, labels, 3))
 
 
 def file2matrix(filename):
@@ -55,9 +47,9 @@ def file2matrix(filename):
         line = line.strip() 
         listFromLine = line.split('\t')
         returnMat[index,:] = listFromLine[0:3]
-        classLabelVector.append(int(listFromLine[-1]))
+        classLabelVector.append(listFromLine[-1])
         index += 1
-    return returnMat,classLabelVector
+    return returnMat, classLabelVector
 
 
 def autoNorm(dataSet):
@@ -75,14 +67,14 @@ def autoNorm(dataSet):
 def datingClassTest():
     # 测试函数
     hoRatio = 0.10
-    datingDataMat, datingLabels = file2matrix('datingTestSet.txt')
+    datingDataMat, datingLabels = file2matrix(TESTFILE)
     normMat, ranges, minVals = autoNorm(datingDataMat)
     m = normMat.shape[0]
     numTestVecs = int(m*hoRatio)
     errorCount = 0.0
     for i in range(numTestVecs):
         classifierResult = classify0(normMat[i,:], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
-        print("the classifier came back with:%d, the real answer is:%d"%(classifierResult, datingLabels[i]))
+        print("the classifier came back with:%s, the real answer is:%s"% (classifierResult, datingLabels[i]))
         if classifierResult != datingLabels[i]: errorCount += 1.0
     print("the total error rate is:%f" % (errorCount/float(numTestVecs)))
 
@@ -98,3 +90,18 @@ def classifyPerson():
     classifierResult = classify0((inArr-minVals)/ranges, normMat, datingLabels, 3)
     print("You will probably like this person: ", resultList[classifierResult - 1])
 
+
+def show_graph(mat):
+    fig = plt.figure()                  # Creates a new figure.
+    ax = fig.add_subplot(111)
+    ax.scatter(mat[:, 1], mat[:, 2])    # Make a scatter plot of x vs y.Marker size is scaled by s and marker color is
+    # mapped to c. ^:按位异或运算符
+    plt.show()
+
+
+if __name__ == '__main__':
+    returnMat, classLabelVector = file2matrix(TESTFILE)
+    # print(returnMat)
+    # print(classLabelVector)
+    show_graph(returnMat)
+    datingClassTest()
