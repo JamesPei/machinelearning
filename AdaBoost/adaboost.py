@@ -5,6 +5,7 @@ from numpy.core.umath import sign
 from numpy.ma import multiply
 
 from boost import buildStump, stumpClassify
+import matplotlib.pyplot as plt
 
 """
 伪代码：
@@ -88,7 +89,6 @@ def plotROC(predStrengths, classLabels):
     :param classLabels:
     :return:
     """
-    import matplotlib.pyplot as plt
     cur = (1.0, 1.0)
     ySum = 0.0
     numPosClas = sum(array(classLabels) == 1.0)
